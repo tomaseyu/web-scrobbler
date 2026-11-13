@@ -76,8 +76,16 @@ Connector.getUniqueID = () => {
 
 window.addEventListener('message', (event: MessageEvent<unknown>) => {
 	const frame = getMiniPlayerYoutubeFrame();
-	const info = event.origin === YT_ORIGIN && parseYoutubeInfo(event.data);
-	if (!frame || !info) {
+	if (
+		!frame ||
+		event.source !== frame.contentWindow ||
+		event.origin !== YT_ORIGIN
+	) {
+		return;
+	}
+
+	const info = parseYoutubeInfo(event.data);
+	if (!info) {
 		return;
 	}
 
@@ -94,7 +102,7 @@ function isVideoModalOpen() {
 }
 
 function getMiniPlayerYoutubeFrame() {
-	return document.querySelector(
+	return document.querySelector<HTMLIFrameElement>(
 		`${miniPlayerSelector}:not(.is-apple) iframe`,
 	);
 }
@@ -119,7 +127,7 @@ function parseYoutubeInfo(data: unknown) {
 			message?.event === 'initialDelivery' ||
 			message?.event === 'infoDelivery';
 
-		return (isInfoMessage && message.info) || null;
+		return isInfoMessage ? (message.info ?? null) : null;
 	} catch {
 		return null;
 	}
