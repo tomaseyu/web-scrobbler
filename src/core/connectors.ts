@@ -2539,4 +2539,10 @@ export default <ConnectorMeta[]>[
 		js: 'flavibot.js',
 		id: 'flavibot',
 	},
+	{
+		label: 'Gothic Codex',
+		matches: ['*://www.gothiccodex.com/*'],
+		js: 'gothiccodex.js',
+		id: 'gothiccodex',
+	},
 ];
